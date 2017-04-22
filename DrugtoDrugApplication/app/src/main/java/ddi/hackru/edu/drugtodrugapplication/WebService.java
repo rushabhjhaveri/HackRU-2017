@@ -76,8 +76,6 @@ public class WebService
                 try {
                     HttpURLConnection connection = (HttpURLConnection) new URL("https://rxnav.nlm.nih.gov/REST/rxcui?name=" + params[0]).openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setDoInput(true);
-                    connection.setDoOutput(true);
 
                     return connection.getInputStream();
                 }catch(IOException e)
@@ -113,13 +111,11 @@ public class WebService
     {
         AsyncTask<String, Void, InputStream> task = new AsyncTask<String, Void, InputStream>() {
             @Override
-            protected InputStream doInBackground(Medication... params)
+            protected InputStream doInBackground(String... params)
             {
                 try {
-                    HttpURLConnection connection = (HttpURLConnection) new URL("https://rxnav.nlm.nih.gov/REST/rxcui?name=" + params[0]).openConnection();
+                    HttpURLConnection connection = (HttpURLConnection) new URL("https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=" + params[0]).openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setDoInput(true);
-                    connection.setDoOutput(true);
 
                     return connection.getInputStream();
                 }catch(IOException e)
@@ -135,10 +131,10 @@ public class WebService
             {
                 try {
                     JsonParser parser = new JsonParser();
-                    Medication medication = parser.parseMedication(stream);
+                    List<Adversity> adversityList = parser.parseAdversities(stream);
 
                     if(onRARListener != null)
-                        onRARListener.onRequestAdversitiesResponded();
+                        onRARListener.onRequestAdversitiesResponded(adversityList);
                 }catch(XmlPullParserException e)
                 {
                     e.printStackTrace();
