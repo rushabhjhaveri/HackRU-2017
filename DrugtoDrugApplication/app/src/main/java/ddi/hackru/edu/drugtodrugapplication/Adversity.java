@@ -25,7 +25,7 @@ public class Adversity implements Comparable<Adversity> {
     Adversity(Medication consumed, Medication target, String description, String severe){
         this.consumedMedication = consumed;
         this.interferingMedication = target;
-        this.description = null;
+        this.description = description;
         this.severity = severe;
     }
 
