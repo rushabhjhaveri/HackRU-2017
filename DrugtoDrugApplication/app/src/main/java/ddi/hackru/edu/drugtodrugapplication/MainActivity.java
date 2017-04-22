@@ -15,17 +15,8 @@ public class MainActivity extends AppCompatActivity {
         controller = new MedicationController();
         controller.setOnMedicationChangedListener(new MedicationController.OnMedicationChangedListener() {
             @Override
-            public void onMedicationChanged(Medication medication, int type)
-            {
-                switch(type)
-                {
-                    case MEDICATION_CHANGED:
-                        // Change UI
-                        break;
-                    case ADVERSITY_CHANGED:
-                        // Change UI
-                        break;
-                }
+            public void onMedicationQueried(Medication medication) {
+
             }
         });
     }

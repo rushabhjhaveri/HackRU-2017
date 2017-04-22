@@ -27,9 +27,12 @@ public class Adversity implements Comparable<Adversity> {
         this.severity = severe;
     }
 
+    //getter method - returns consumed medication
     public Medication getConsumedMedication(){
         return this.consumedMedication;
     }
+
+    //
 
     public Medication getTargetMedication(){
         return this.interferingMedication;
