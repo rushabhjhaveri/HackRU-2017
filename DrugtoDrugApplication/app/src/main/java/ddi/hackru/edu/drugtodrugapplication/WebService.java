@@ -53,7 +53,7 @@ public class WebService
 
             @Override
             protected void onPostExecute(InputStream stream) {
-                super.onPostExecute(medication);
+                super.onPostExecute(stream);
             }
         };
         task.execute(new String[]{ drugName });
