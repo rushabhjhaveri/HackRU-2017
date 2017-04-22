@@ -37,7 +37,7 @@ public class XmlParser
         if(rxnormid == null)
             return null;
         else
-            return new Medication();
+            return new Medication(drugName, rxnormid);
     }
 
 }

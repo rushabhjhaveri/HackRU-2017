@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by Jasper Bae on 4/22/2017.
@@ -129,19 +130,11 @@ public class WebService
             @Override
             protected void onPostExecute(InputStream stream)
             {
-                try {
-                    JsonParser parser = new JsonParser();
-                    List<Adversity> adversityList = parser.parseAdversities(stream);
+                JsonParser parser = new JsonParser();
+                List<Adversity> adversityList = parser.parseAdversities(stream);
 
-                    if(onRARListener != null)
-                        onRARListener.onRequestAdversitiesResponded(adversityList);
-                }catch(XmlPullParserException e)
-                {
-                    e.printStackTrace();
-                }catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
+                if(onRARListener != null)
+                    onRARListener.onRequestAdversitiesResponded(adversityList);
             }
         };
         task.execute(rxnormid);

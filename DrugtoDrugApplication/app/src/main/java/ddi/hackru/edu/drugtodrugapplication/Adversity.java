@@ -1,7 +1,5 @@
 package ddi.hackru.edu.drugtodrugapplication;
 
-import java.util.Comparable;
-
 /**
  * Created by Rushabh on 4/22/2017.
  */
@@ -13,7 +11,7 @@ public class Adversity implements Comparable<Adversity> {
     private String severity;
     //default constructor
     //initializes all instance variables to default values
-    Adversity(){
+    public Adversity(){
         consumedMedication = null;
         interferingMedication = null;
         description = null;
@@ -22,10 +20,10 @@ public class Adversity implements Comparable<Adversity> {
 
     //parameterized constructor
 
-    Adversity(Medication consumed, Medication target, String description, String severe){
+    public Adversity(Medication consumed, Medication target, String description, String severe){
         this.consumedMedication = consumed;
         this.interferingMedication = target;
-        this.description = null;
+        this.description = description;
         this.severity = severe;
     }
 
@@ -39,6 +37,11 @@ public class Adversity implements Comparable<Adversity> {
 
     public String getDescription(){
         return this.description;
+    }
+
+    public String getSeverity()
+    {
+        return severity;
     }
 
     public int compareTo(Adversity other){

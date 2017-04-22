@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jasper Bae on 4/22/2017.
@@ -48,11 +49,13 @@ public class JsonParser
                         JSONObject otherMedication = array.getJSONObject(1).getJSONObject(INTERACTION_MIN_CONCEPT_TAG);
                         otherDrugName = otherMedication.getString("name");
                         rxnormId = otherMedication.getString("rxcuid");
+                        Medication other = new Medication(otherDrugName, rxnormId);
 
                         String severity = pair.getString("severity");
                         String description = pair.getString("description");
 
-
+                        Adversity adversity = new Adversity(null, other, description, severity);
+                        adversities.add(adversity);
                     }
                 }
             }
