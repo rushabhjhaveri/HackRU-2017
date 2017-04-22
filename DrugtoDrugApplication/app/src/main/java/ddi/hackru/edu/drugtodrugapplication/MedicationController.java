@@ -11,30 +11,49 @@ public class MedicationController
 
     public interface OnMedicationChangedListener
     {
-        public static final int MEDICATION_CHANGED = 0,
-                                ADVERSITY_CHANGED = 1;
-
-        void OnMedicationChanged(Medication medication, int type);
+        void onMedicationQueried(Medication medication);
     }
 
     private WebService webService;
     private Medication currentMedication;
+    private OnMedicationChangedListener listener;
 
     public MedicationController()
     {
         webService = WebService.getInstance();
         webService.setOnRequestAdversitiesRespondedListener(new WebService.OnRequestAdversitiesRespondedListener() {
             @Override
-            public void onRequestAdversitiesResponded(List<Adversity> adversities) {
+            public void onRequestAdversitiesResponded(List<Adversity> adversities)
+            {
+                currentMedication.setAdversityList(adversities);
 
+                if(listener != null)
+                    listener.onMedicationQueried(currentMedication);
             }
         });
         webService.setOnRequestRxNormIdRespondedListener(new WebService.OnRequestRxNormIdRespondedListener() {
             @Override
-            public void onRequestRxNormIdResponded(Medication medication) {
-
+            public void onRequestRxNormIdResponded(Medication medication)
+            {
+                currentMedication = medication;
+                webService.requestAdversities(currentMedication.getRXNormID()); // redirect and try to get the list of adversity list
             }
         });
+    }
+
+    public void queryMedication(String drugName)
+    {
+        webService.requestRxNormId(drugName);
+    }
+
+    public void setOnMedicationChangedListener(OnMedicationChangedListener listener)
+    {
+        this.listener = listener;
+    }
+
+    public Medication getCurrentMedication()
+    {
+        return currentMedication;
     }
 
 }
