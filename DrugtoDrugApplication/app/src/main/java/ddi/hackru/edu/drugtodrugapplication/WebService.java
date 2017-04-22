@@ -70,15 +70,26 @@ public class WebService
 
     public void requestRxNormId(String drugName)
     {
-        AsyncTask<String, Void, InputStream> task = new AsyncTask<String, Void, InputStream>() {
+        AsyncTask<String, Void, Medication> task = new AsyncTask<String, Void, Medication>() {
             @Override
-            protected InputStream doInBackground(String... params)
+            protected Medication doInBackground(String... params)
             {
                 try {
                     HttpURLConnection connection = (HttpURLConnection) new URL("https://rxnav.nlm.nih.gov/REST/rxcui?name=" + params[0]).openConnection();
                     connection.setRequestMethod("GET");
 
-                    return connection.getInputStream();
+                    InputStream stream = connection.getInputStream();
+                    try {
+                        XmlParser parser = new XmlParser();
+                        Medication medication = parser.parseMedication(stream);
+                        return medication;
+                    }catch(XmlPullParserException e)
+                    {
+                        e.printStackTrace();
+                    }catch(IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }catch(IOException e)
                 {
                     e.printStackTrace();
@@ -88,21 +99,10 @@ public class WebService
             }
 
             @Override
-            protected void onPostExecute(InputStream stream)
+            protected void onPostExecute(Medication medication)
             {
-                try {
-                    XmlParser parser = new XmlParser();
-                    Medication medication = parser.parseMedication(stream);
-
-                    if(onRIRListener != null)
-                        onRIRListener.onRequestRxNormIdResponded(medication);
-                }catch(XmlPullParserException e)
-                {
-                    e.printStackTrace();
-                }catch(IOException e)
-                {
-                    e.printStackTrace();
-                }
+                if(onRIRListener != null)
+                    onRIRListener.onRequestRxNormIdResponded(medication);
             }
         };
         task.execute(drugName);
@@ -110,15 +110,18 @@ public class WebService
 
     public void requestAdversities(String rxnormid)
     {
-        AsyncTask<String, Void, InputStream> task = new AsyncTask<String, Void, InputStream>() {
+        AsyncTask<String, Void, List<Adversity>> task = new AsyncTask<String, Void, List<Adversity>>() {
             @Override
-            protected InputStream doInBackground(String... params)
+            protected List<Adversity> doInBackground(String... params)
             {
                 try {
                     HttpURLConnection connection = (HttpURLConnection) new URL("https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=" + params[0]).openConnection();
                     connection.setRequestMethod("GET");
 
-                    return connection.getInputStream();
+                    InputStream inputstream = connection.getInputStream();
+                    JsonParser parser = new JsonParser();
+                    List<Adversity> adversityList = parser.parseAdversities(inputstream);
+                    return adversityList;
                 }catch(IOException e)
                 {
                     e.printStackTrace();
@@ -128,11 +131,8 @@ public class WebService
             }
 
             @Override
-            protected void onPostExecute(InputStream stream)
+            protected void onPostExecute(List<Adversity> adversityList)
             {
-                JsonParser parser = new JsonParser();
-                List<Adversity> adversityList = parser.parseAdversities(stream);
-
                 if(onRARListener != null)
                     onRARListener.onRequestAdversitiesResponded(adversityList);
             }

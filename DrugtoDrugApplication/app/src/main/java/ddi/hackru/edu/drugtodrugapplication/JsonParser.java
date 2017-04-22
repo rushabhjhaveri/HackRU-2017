@@ -22,7 +22,7 @@ public class JsonParser
     private static final String INTERACTION_TYPE_TAG = "interactionType";
     private static final String INTERACTION_PAIR_TAG = "interactionPair";
     private static final String INTERACTION_CONCEPT_TAG = "interactionConcept";
-    private static final String INTERACTION_MIN_CONCEPT_TAG = "minConcept";
+    private static final String INTERACTION_MIN_CONCEPT_TAG = "minConceptItem";
 
     public List<Adversity> parseAdversities(InputStream in)
     {
@@ -45,10 +45,11 @@ public class JsonParser
                         String rxnormId = "";
 
                         JSONArray array = pair.getJSONArray(INTERACTION_CONCEPT_TAG);
+                        System.out.println("Interaction Concept Tag Length: " + array.length());
                         // get the second
                         JSONObject otherMedication = array.getJSONObject(1).getJSONObject(INTERACTION_MIN_CONCEPT_TAG);
                         otherDrugName = otherMedication.getString("name");
-                        rxnormId = otherMedication.getString("rxcuid");
+                        rxnormId = otherMedication.getString("rxcui");
                         Medication other = new Medication(otherDrugName, rxnormId);
 
                         String severity = pair.getString("severity");

@@ -16,8 +16,9 @@ public class MainActivity extends AppCompatActivity {
         controller.setOnMedicationChangedListener(new MedicationController.OnMedicationChangedListener() {
             @Override
             public void onMedicationQueried(Medication medication) {
-
+                System.out.println(medication.getDrugName() + ":" + medication.getRXNormID());
             }
         });
+        controller.queryMedication("Advil");
     }
 }
