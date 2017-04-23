@@ -41,7 +41,7 @@ public class CameraEnterActivity extends AppCompatActivity {
                 selectImage();
             }
         });
-        ivImage = (ImageView) findViewById(R.id.ivImage);
+        //ivImage = (ImageView) findViewById(R.id.ivImage);
 
     }
 

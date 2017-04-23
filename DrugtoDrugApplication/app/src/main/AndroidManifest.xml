@@ -25,7 +25,10 @@
         </activity>
         <activity android:name=".ManualEnterView" />
         <activity android:name=".CameraEnterActivity" />
-        <activity android:name=".QuerriesListView"/>
+        <activity android:name=".QuerriesListView">
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable"/>
+        </activity>
     </application>
 
 </manifest>

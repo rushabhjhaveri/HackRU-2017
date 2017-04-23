@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -139,6 +140,7 @@ public class WebService
                     InputStream inputstream = connection.getInputStream();
                     JsonParser parser = new JsonParser();
                     List<Adversity> adversityList = parser.parseAdversities(inputstream);
+                    Collections.sort(adversityList);
                     return adversityList;
                 }catch(IOException e)
                 {
