@@ -23,16 +23,23 @@ public class XmlParser
     public Medication parseMedication(InputStream in) throws XmlPullParserException, IOException
     {
         XmlPullParser parser = Xml.newPullParser();
-        parser.require(XmlPullParser.START_TAG, ns, "rxnormdata");
         parser.setInput(in, null);
         parser.nextTag(); // this gets us the rxnormdata
+        System.out.println(parser.getName());
         parser.nextTag(); // this gets us the idGroup
+        System.out.println(parser.getName());
         parser.nextTag(); // this gets us the name
-        String drugName = parser.getName();
+        System.out.println(parser.getText());
+        String drugName = parser.nextText();
+        System.out.println("drugname:" + drugName);
+
         parser.nextTag();
+        System.out.println(parser.getName());
         String rxnormid = null;
-        if(parser.getEventType() != XmlPullParser.END_TAG)
-            rxnormid = parser.getText();
+        if(parser.getEventType() != XmlPullParser.END_TAG) {
+            rxnormid = parser.nextText();
+        }
+
         in.close();
         if(rxnormid == null)
             return null;
