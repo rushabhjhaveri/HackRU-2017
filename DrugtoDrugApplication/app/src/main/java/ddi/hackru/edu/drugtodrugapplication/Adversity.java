@@ -55,7 +55,7 @@ public class Adversity implements Comparable<Adversity> {
     @Override
     public String toString()
     {
-        return interferingMedication.getDrugName() + "||\tSeverity: " + severity + "||\n" + description;
+        return interferingMedication.getDrugName() + "\nSeverity: " + severity + "\n" + description;
     }
 
 }

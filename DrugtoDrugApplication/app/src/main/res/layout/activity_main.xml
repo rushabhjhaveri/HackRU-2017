@@ -10,7 +10,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="ddi.hackru.edu.drugtodrugapplication.MainActivity">
+    tools:context="ddi.hackru.edu.drugtodrugapplication.MainActivity"
+    android:background="#00b8e6">
 
     <EditText
         android:layout_width="wrap_content"
@@ -20,7 +21,8 @@
         android:id="@+id/editText"
         android:hint="Drug Name"
         android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal" />
+        android:gravity="center_vertical|center_horizontal"
+        android:elevation="10dp"/>
 
     <Button
         android:text="Search"
@@ -29,23 +31,27 @@
         android:layout_marginTop="12dp"
         android:id="@+id/button3"
         android:onClick="searchForResults"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:background="#ffffff"
+        android:elevation="3dp"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="25dp"
         android:id="@+id/button"
         android:text="Take a Picture"
         android:onClick="buttonCameraInput"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:elevation="4dp"
+        android:background="#ffffff"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:text="This product uses publicly available data from the U.S. National Library of Medicine (NLM), National Institutes of Health, Department of Health and Human Services; NLM is not responsible for the product and does not endorse or recommend this or any other product."
-        android:layout_marginTop="255dp"
+        android:layout_marginTop="230dp"
         android:textStyle="normal|italic" />
 
 </LinearLayout>
