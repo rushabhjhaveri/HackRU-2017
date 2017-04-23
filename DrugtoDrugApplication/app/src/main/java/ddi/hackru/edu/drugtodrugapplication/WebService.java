@@ -5,7 +5,9 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -156,16 +158,18 @@ public class WebService
         task.execute(rxnormid);
     }
 
-    public void requestPhotoRecognition(final String imageToUrl)
+    public void requestPhotoRecognition(Byte[] image)
     {
-        AsyncTask<String, Void, Medication> task = new AsyncTask<String, Void, Medication>()
+        AsyncTask<Byte[], Void, Medication> task = new AsyncTask<Byte[], Void, Medication>()
         {
+            Handler handler = new Handler();
+
             @Override
-            protected Medication doInBackground(String... params)
+            protected Medication doInBackground(Byte[]... params)
             {
                 try
                 {
-                    URL url = new URL("https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr");
+                    URL url = new URL("https://westus.api.cognitive.microsoft.com/vision/v1.0/recognizeText?handwriting=true");
                     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoInput(true);
@@ -182,29 +186,62 @@ public class WebService
 
                     //Bitmap bitmap = BitmapFactory.decodeFile(imageToUrl);
 
-                    Bitmap bitmap = Picasso.with(Constants.context).load(params[0]).get();
+                    byte[] b = new byte[params[0].length];
+                    for(int i = 0; i < b.length; i++)
+                    {
+                        b[i] = params[0][i].byteValue();
+                    }
 
                     BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream());
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.write(b);
                     bos.flush();
+
+                    final String op = connection.getHeaderField("Operation-Location");
+                    System.out.println("OP:" + op);
 
                     int responseCode = connection.getResponseCode();
                     System.out.println("Response Code:" + responseCode);
 
-                    StringBuilder json = new StringBuilder();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String line = "";
-                    while((line = br.readLine()) != null)
+                    handler.postDelayed(new Runnable()
                     {
-                        json.append(line).append('\n');
-                    }
-                    br.close();
+                        public void run()
+                        {
+                                new AsyncTask<Void, Void, Void>()
+                                {
+                                    @Override
+                                    protected Void doInBackground(Void... voids) {
+                                        try {
+                                            URL url2 = new URL(op);
+                                            HttpsURLConnection connection2 = (HttpsURLConnection) url2.openConnection();
+                                            connection2.setRequestMethod("GET");
+                                            connection2.setDoOutput(false);
+                                            connection2.setRequestProperty("Ocp-Apim-Subscription-Key", "b2d7d2471e2142a79a2c4a6d3b9b0778");
 
-                    RecognitionJsonParser parser = new RecognitionJsonParser();
-                    String word = parser.parseRecognition(json.toString());
+                                            StringBuilder json = new StringBuilder();
+                                            BufferedReader br = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
+                                            String line = "";
+                                            while ((line = br.readLine()) != null) {
+                                                json.append(line).append('\n');
+                                            }
+                                            br.close();
 
-                    // Find medication...
-                    requestRxNormId(word);
+                                            System.out.println("JSON:" + json);
+
+                                            RecognitionJsonParser parser = new RecognitionJsonParser();
+                                            String word = parser.parseRecognition(json.toString());
+
+                                            // Find medication...
+                                            requestRxNormId(word);
+                                        }catch(Exception e)
+                                        {
+                                            e.printStackTrace();
+                                        }
+
+                                        return null;
+                                    }
+                                }.execute();
+                        }
+                    }, 5000);
                 }catch(Exception e)
                 {
                     e.printStackTrace();
@@ -213,7 +250,7 @@ public class WebService
                 return null;
             }
         };
-        task.execute(imageToUrl);
+        task.execute(image);
     }
 
     public static WebService getInstance()

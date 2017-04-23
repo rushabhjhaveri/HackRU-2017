@@ -35,8 +35,16 @@ public class MedicationController
             @Override
             public void onRequestRxNormIdResponded(Medication medication)
             {
-                currentMedication = medication;
-                webService.requestAdversities(currentMedication.getRXNormID()); // redirect and try to get the list of adversity list
+                if(medication != null) {
+                    currentMedication = medication;
+                    webService.requestAdversities(currentMedication.getRXNormID()); // redirect and try to get the list of adversity list
+                }else
+                {
+                    currentMedication = null;
+
+                    if(listener != null)
+                        listener.onMedicationQueried(currentMedication);
+                }
             }
         });
     }
@@ -46,9 +54,9 @@ public class MedicationController
         webService.requestRxNormId(drugName);
     }
 
-    public void queryMedicationFromFile(String filePath)
+    public void queryMedicationFromFile(Byte[] image)
     {
-        webService.requestPhotoRecognition(filePath);
+        webService.requestPhotoRecognition(image);
     }
 
     public void setOnMedicationChangedListener(OnMedicationChangedListener listener)

@@ -22,21 +22,13 @@ public class RecognitionJsonParser
         try
         {
             JSONObject root = new JSONObject(json);
-            JSONArray regionsArray = root.getJSONArray(REGION_TAG);
-            for(int i = 0; i < regionsArray.length(); i++)
+            JSONObject resultObject = root.getJSONObject("recognitionResult");
+            JSONArray lines = resultObject.getJSONArray(LINES_TAG);
+            for(int j = 0; j < lines.length(); j++)
             {
-                JSONArray lines = regionsArray.getJSONObject(i).getJSONArray(LINES_TAG);
-                for(int j = 0; j < lines.length(); j++)
-                {
-                    JSONArray words = lines.getJSONObject(j).getJSONArray(WORDS_TAG);
-                    for(int k = 0; k < words.length(); k++)
-                    {
-                        JSONObject object = words.getJSONObject(k);
-                        builder.append(" " + object.getString("text") + " ");
-                    }
-                }
-                builder.append('\n');
+                builder.append(lines.getJSONObject(j).getString("text"));
             }
+            //builder.append('\n');
         }catch(JSONException e)
         {
             e.printStackTrace();

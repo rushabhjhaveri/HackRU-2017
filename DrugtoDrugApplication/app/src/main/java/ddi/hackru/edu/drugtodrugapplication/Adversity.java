@@ -52,4 +52,10 @@ public class Adversity implements Comparable<Adversity> {
         return returnVal;
     }
 
+    @Override
+    public String toString()
+    {
+        return interferingMedication.getDrugName() + "||\tSeverity: " + severity + "||\n" + description;
+    }
+
 }

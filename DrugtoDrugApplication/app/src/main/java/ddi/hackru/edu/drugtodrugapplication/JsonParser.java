@@ -29,6 +29,8 @@ public class JsonParser
         String json = convertStreamToString(in);
         List<Adversity> adversities = new ArrayList<Adversity>();
 
+        System.out.println("JSON ADV:" + json);
+
         try {
             JSONObject root = new JSONObject(json);
             JSONArray interactionTypeGroup = root.getJSONArray(INTERACTION_TYPE_GROUP_TAG);
