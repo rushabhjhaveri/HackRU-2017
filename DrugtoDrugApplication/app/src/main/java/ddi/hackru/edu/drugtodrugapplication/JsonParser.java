@@ -45,7 +45,6 @@ public class JsonParser
                         String rxnormId = "";
 
                         JSONArray array = pair.getJSONArray(INTERACTION_CONCEPT_TAG);
-                        System.out.println("Interaction Concept Tag Length: " + array.length());
                         // get the second
                         JSONObject otherMedication = array.getJSONObject(1).getJSONObject(INTERACTION_MIN_CONCEPT_TAG);
                         otherDrugName = otherMedication.getString("name");

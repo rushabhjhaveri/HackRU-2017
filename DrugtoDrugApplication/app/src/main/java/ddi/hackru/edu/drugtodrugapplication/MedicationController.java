@@ -46,6 +46,11 @@ public class MedicationController
         webService.requestRxNormId(drugName);
     }
 
+    public void queryMedicationFromFile(String filePath)
+    {
+        webService.requestPhotoRecognition(filePath);
+    }
+
     public void setOnMedicationChangedListener(OnMedicationChangedListener listener)
     {
         this.listener = listener;

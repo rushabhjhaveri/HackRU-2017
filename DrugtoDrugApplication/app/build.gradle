@@ -30,10 +30,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile files('libs/httpclient-4.5.3.jar')
-    compile files('libs/httpcore-4.4.6.jar')
-    compile files('libs/httpmime-4.5.3.jar')
-
+    compile group: 'com.squareup.picasso', name: 'picasso', version: '2.5.2'
     compile 'com.microsoft.projectoxford:vision:0.5.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'

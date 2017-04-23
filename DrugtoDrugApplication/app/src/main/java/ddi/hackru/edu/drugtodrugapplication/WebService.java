@@ -5,24 +5,20 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import com.squareup.picasso.Picasso;
+
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -160,39 +156,55 @@ public class WebService
         task.execute(rxnormid);
     }
 
-    public void requestPhotoRecognition(String imageToUrl)
+    public void requestPhotoRecognition(final String imageToUrl)
     {
         AsyncTask<String, Void, Medication> task = new AsyncTask<String, Void, Medication>()
         {
             @Override
             protected Medication doInBackground(String... params)
             {
-                CloseableHttpClient httpClient = HttpClients.createDefault();
-
                 try
                 {
-                    URIBuilder uriBuilder = new URIBuilder("https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr");
-                    uriBuilder.setParameter("language", "unk");
-                    uriBuilder.setParameter("detectOrientation", "true");
+                    URL url = new URL("https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr");
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
 
-                    URI uri = uriBuilder.build();
-                    HttpPost post = new HttpPost(uri);
+                    String urlParameters = "language=unk&detectOrientation=true";
 
-                    post.addHeader("Content-Type", "application/octet-stream");
-                    post.addHeader("Ocp-Apim-Subscription-Key", "b2d7d2471e2142a79a2c4a6d3b9b0778");
+                    connection.setRequestProperty("Content-Type", "application/octet-stream");
+                    connection.setRequestProperty("Ocp-Apim-Subscription-Key", "b2d7d2471e2142a79a2c4a6d3b9b0778");
+/*
+                    DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+                    outputStream.writeBytes(urlParameters);
+                    outputStream.flush();*/
 
-                    File file = new File(params[0]);
-                    FileEntity reqEntity = new FileEntity(file, ContentType.APPLICATION_OCTET_STREAM);
-                    post.setEntity(reqEntity);
+                    //Bitmap bitmap = BitmapFactory.decodeFile(imageToUrl);
 
-                    HttpResponse response = httpClient.execute(post);
-                    HttpEntity entity = response.getEntity();
+                    Bitmap bitmap = Picasso.with(Constants.context).load(params[0]).get();
 
-                    if(entity != null)
+                    BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream());
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+
+                    int responseCode = connection.getResponseCode();
+                    System.out.println("Response Code:" + responseCode);
+
+                    StringBuilder json = new StringBuilder();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line = "";
+                    while((line = br.readLine()) != null)
                     {
-                        String r = EntityUtils.toString(entity);
-                        System.out.println("E:" + r);
+                        json.append(line).append('\n');
                     }
+                    br.close();
+
+                    RecognitionJsonParser parser = new RecognitionJsonParser();
+                    String word = parser.parseRecognition(json.toString());
+
+                    // Find medication...
+                    requestRxNormId(word);
                 }catch(Exception e)
                 {
                     e.printStackTrace();
